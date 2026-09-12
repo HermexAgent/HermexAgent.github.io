@@ -64,13 +64,31 @@ if ! command -v git &> /dev/null; then
 fi
 echo -e "${GREEN}✓ Git: $(git --version)${NC}"
 
+# 1-Click Ollama Setup Prompt
+echo -e "\n${BOLD}${CYAN}──────────────────────────────────────────────────────────${NC}"
+echo -e "${BOLD}📦 Local AI Engine (Ollama)${NC}"
+echo -e "${BOLD}${CYAN}──────────────────────────────────────────────────────────${NC}"
+if ! command -v ollama &> /dev/null; then
+    read -p "Would you like to auto-install Ollama for 100% private local AI? [Y/n]: " INSTALL_OLLAMA
+    INSTALL_OLLAMA=${INSTALL_OLLAMA:-Y}
+    if [[ "$INSTALL_OLLAMA" =~ ^[Yy]$ ]]; then
+        echo -e "${YELLOW}⬇️ Downloading and installing Ollama...${NC}"
+        curl -fsSL https://ollama.com/install.sh | sh
+        echo -e "${GREEN}✓ Ollama installed successfully.${NC}"
+    else
+        echo -e "${YELLOW}ℹ️ Skipped Ollama installation. You can install it anytime later.${NC}"
+    fi
+else
+    echo -e "${GREEN}✓ Ollama is already installed.${NC}"
+fi
+
 # Clone or update HermexAgent
 if [ -d "$INSTALL_DIR" ]; then
-    echo -e "${CYAN}📦 Updating existing HermexAgent installation at ${INSTALL_DIR}...${NC}"
+    echo -e "\n${CYAN}📦 Updating existing HermexAgent installation at ${INSTALL_DIR}...${NC}"
     cd "$INSTALL_DIR"
     git pull origin main
 else
-    echo -e "${CYAN}📦 Installing HermexAgent to ${INSTALL_DIR}...${NC}"
+    echo -e "\n${CYAN}📦 Installing HermexAgent to ${INSTALL_DIR}...${NC}"
     git clone "$REPO_URL" "$INSTALL_DIR"
     cd "$INSTALL_DIR"
 fi

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HermexAgent | The All-in-One Autonomous AI Stack</title>
+    <meta name="description" content="Zero-Config Autonomous AI Agent Stack with Direct Claude/Gmail Web Sessions, 1-Click Local Ollama & Voice Hub, and Telegram Remote C2.">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#ecfeff',
+                            400: '#22d3ee',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            900: '#164e63',
+                            950: '#083344',
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #030712;
+            color: #f3f4f6;
+        }
+        .glow-effect {
+            background: radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.15), transparent 70%);
+        }
+        .glass-card {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card:hover {
+            border-color: rgba(6, 182, 212, 0.3);
+        }
+        .terminal-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .terminal-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="selection:bg-cyan-500 selection:text-black min-h-screen flex flex-col glow-effect">
+
+    <!-- Top Navigation -->
+    <header class="sticky top-0 z-50 backdrop-blur-md border-b border-gray-800/80 bg-gray-950/60">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-black font-black text-xl shadow-lg shadow-cyan-500/20">
+                    H
+                </div>
+                <span class="text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5">
+                    Hermex<span class="text-cyan-400">Agent</span>
+                    <span class="text-[10px] uppercase font-bold tracking-widest bg-cyan-950 text-cyan-400 px-2 py-0.5 rounded-full border border-cyan-800/60">v1.0</span>
+                </span>
+            </div>
+
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+                <a href="#features" class="hover:text-cyan-400 transition">Superpowers</a>
+                <a href="#ollama" class="hover:text-cyan-400 transition">Local AI Hub</a>
+                <a href="#voice" class="hover:text-cyan-400 transition">Voice & STT</a>
+                <a href="#telegram" class="hover:text-cyan-400 transition">Telegram C2</a>
+                <a href="#architecture" class="hover:text-cyan-400 transition">Architecture</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <a href="https://github.com/HermexAgent/HermexAgent.github.io" target="_blank" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-900 hover:bg-gray-800 text-gray-200 border border-gray-700 text-sm font-semibold transition">
+                    <i class="fa-brands fa-github text-base"></i>
+                    <span>Star on GitHub</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative pt-20 pb-16 px-6 overflow-hidden">
+        <div class="max-w-5xl mx-auto text-center space-y-8">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-950/80 border border-cyan-500/30 text-cyan-300 text-xs font-semibold tracking-wide">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                Next-Gen Autonomous Agent & Local AI Orchestrator
+            </div>
+
+            <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
+                The All-in-One <br class="hidden sm:block">
+                <span class="bg-gradient-to-r from-cyan-400 via-teal-300 to-blue-500 bg-clip-text text-transparent">
+                    Autonomous AI Stack
+                </span>
+            </h1>
+
+            <p class="max-w-2xl mx-auto text-base sm:text-lg text-gray-400 leading-relaxed">
+                Say goodbye to fragmented setups. HermexAgent unites high-speed agent execution, direct web sessions (Claude/Gemini), 1-click Ollama & Whisper voice hubs, and a complete Telegram command center into a single zero-config package.
+            </p>
+
+            <!-- 1-Line Installer Box -->
+            <div class="max-w-2xl mx-auto pt-2">
+                <div class="glass-card rounded-2xl p-2 sm:p-3 shadow-2xl flex flex-col sm:flex-row items-center gap-3">
+                    <div class="flex items-center gap-3 px-3 py-2 w-full font-mono text-xs sm:text-sm text-cyan-300 overflow-x-auto text-left">
+                        <span class="text-gray-500 select-none">$</span>
+                        <span id="install-cmd">curl -fsSL https://raw.githubusercontent.com/HermexAgent/HermexAgent.github.io/main/install.sh | bash</span>
+                    </div>
+                    <button onclick="copyCmd()" id="copy-btn" class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-black font-bold text-sm flex items-center justify-center gap-2 transition shrink-0 shadow-lg shadow-cyan-500/25">
+                        <i class="fa-regular fa-copy"></i>
+                        <span>Copy</span>
+                    </button>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">Zero dependencies required. Runs effortlessly on macOS (Apple Silicon/Intel) & Linux.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Feature Grid -->
+    <section id="features" class="py-20 px-6 max-w-7xl mx-auto">
+        <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+            <h2 class="text-3xl font-extrabold text-white">Engineered for Supremacy</h2>
+            <p class="text-gray-400 text-sm sm:text-base">Everything you need to automate workflows, write code, and control models on-premise or in the cloud.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Card 1 -->
+            <div class="glass-card rounded-2xl p-8 space-y-4 relative overflow-hidden group">
+                <div class="w-12 h-12 rounded-xl bg-cyan-950/80 border border-cyan-800 text-cyan-400 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-cloud-arrow-down"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white">1-Click Local AI (Ollama)</h3>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    Instantly pull, run, and switch between leading local models like DeepSeek-R1, Qwen 2.5 Coder, and Llama 3.2 with live visual progress bars.
+                </p>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="glass-card rounded-2xl p-8 space-y-4 relative overflow-hidden group">
+                <div class="w-12 h-12 rounded-xl bg-emerald-950/80 border border-emerald-800 text-emerald-400 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-microphone-lines"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white">Local Voice Hub (STT & TTS)</h3>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    Powered by Faster-Whisper and Edge-TTS. Send voice notes in Persian/English to get instant transcriptions and realistic voice audio replies.
+                </p>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="glass-card rounded-2xl p-8 space-y-4 relative overflow-hidden group">
+                <div class="w-12 h-12 rounded-xl bg-blue-950/80 border border-blue-800 text-blue-400 flex items-center justify-center text-xl">
+                    <i class="fa-brands fa-telegram"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white">Telegram Remote C2</h3>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    Complete command and control from Telegram. Approve dangerous commands with inline buttons, trigger cron jobs, and chat on the go.
+                </p>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="glass-card rounded-2xl p-8 space-y-4 relative overflow-hidden group">
+                <div class="w-12 h-12 rounded-xl bg-purple-950/80 border border-purple-800 text-purple-400 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-key"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white">Direct Web Sessions</h3>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    Skip expensive token billing. Use your personal Claude Pro/Max or Gemini Advanced subscriptions directly via secure reverse session drivers.
+                </p>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="glass-card rounded-2xl p-8 space-y-4 relative overflow-hidden group">
+                <div class="w-12 h-12 rounded-xl bg-amber-950/80 border border-amber-800 text-amber-400 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-bolt-lightning"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white">Smart Token Optimizer</h3>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    Reduces token usage by 50% to 80% via worker-orchestrator split, observation masking, and dynamic lazy tool injection.
+                </p>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="glass-card rounded-2xl p-8 space-y-4 relative overflow-hidden group">
+                <div class="w-12 h-12 rounded-xl bg-rose-950/80 border border-rose-800 text-rose-400 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white">Upstream-Safe Architecture</h3>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    Isolated daemon structure ensures downstream updates to core dependencies will never break your custom settings or bot session.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Showcase (Ollama & Voice) -->
+    <section id="ollama" class="py-16 px-6 max-w-7xl mx-auto border-t border-gray-800/80">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-cyan-950 text-cyan-400 text-xs font-bold uppercase tracking-wider">
+                    Local Intelligence
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">
+                    Download & Run Any LLM or Voice Model with 1 Click
+                </h2>
+                <p class="text-gray-400 text-sm sm:text-base leading-relaxed">
+                    Whether you are working locally on your Mac/Linux machine or managing it remotely via Telegram, HermexAgent lets you pull weights directly from Ollama or HuggingFace with live bandwidth and ETA telemetry.
+                </p>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3 text-sm text-gray-300">
+                        <i class="fa-solid fa-check text-cyan-400"></i>
+                        <span>Auto-detection and automatic installation of Ollama if missing</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm text-gray-300">
+                        <i class="fa-solid fa-check text-cyan-400"></i>
+                        <span>Faster-Whisper STT with Small, Base, and Large-v3-Turbo presets</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm text-gray-300">
+                        <i class="fa-solid fa-check text-cyan-400"></i>
+                        <span>Zero RAM waste — models are loaded lazily on request</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terminal Mockup -->
+            <div class="bg-gray-950 rounded-2xl border border-gray-800 shadow-2xl p-5 font-mono text-xs text-gray-300 space-y-4">
+                <div class="flex items-center justify-between border-b border-gray-800 pb-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                    </div>
+                    <span class="text-gray-500 text-[11px]">hermex-supervisor • active</span>
+                </div>
+                <div class="space-y-2">
+                    <div class="text-cyan-400">[HermexAgent.Supervisor] 🚀 Booting Auto-Wired Stack...</div>
+                    <div class="text-emerald-400">✓ Ollama Daemon: Active on http://127.0.0.1:11434</div>
+                    <div class="text-emerald-400">✓ Voice Engine: Faster-Whisper (Small) Loaded</div>
+                    <div class="text-cyan-400">🌐 Web Dashboard: http://127.0.0.1:7860</div>
+                    <div class="text-emerald-400">🤖 Telegram Gateway: Polling Started (Admin Paired)</div>
+                    <div class="text-gray-500 pt-2">⬇️ Pulling Qwen 2.5 Coder 7B...</div>
+                    <div class="text-yellow-400">[██████████████░░░░░░] 74% (3.4 GB / 4.7 GB) • 24.1 MB/s</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t border-gray-800/80 bg-gray-950 py-10 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-gray-300">HermexAgent</span>
+                <span>• Released under MIT License</span>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="https://github.com/HermexAgent/HermexAgent.github.io" class="hover:text-cyan-400 transition">GitHub Repository</a>
+                <a href="https://github.com/HermexAgent" class="hover:text-cyan-400 transition">Organization</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function copyCmd() {
+            const text = document.getElementById('install-cmd').innerText;
+            navigator.clipboard.writeText(text);
+            const btn = document.getElementById('copy-btn');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i><span>Copied!</span>';
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fa-regular fa-copy"></i><span>Copy</span>';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
