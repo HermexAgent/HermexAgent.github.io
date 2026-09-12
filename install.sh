@@ -32,7 +32,7 @@ EOF
 echo -e "${NC}"
 
 INSTALL_DIR="$HOME/.hermexagent"
-REPO_URL="https://github.com/HermexAgent/HermexAgent.git"
+REPO_URL="https://github.com/HermexAgent/HermexAgent.github.io.git"
 
 echo -e "${YELLOW}🔍 Checking system prerequisites...${NC}"
 

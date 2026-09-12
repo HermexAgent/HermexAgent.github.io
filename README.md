@@ -14,7 +14,7 @@
 **The All-in-One Autonomous AI Stack**  
 *Zero-Config Installer • 1-Click Local Ollama & Voice Hub • Claude/Gmail Direct Login • Telegram Remote C2*
 
-[![GitHub Stars](https://img.shields.io/github/stars/HermexAgent/HermexAgent?style=for-the-badge&color=blue)](https://github.com/HermexAgent/HermexAgent)
+[![GitHub Stars](https://img.shields.io/github/stars/HermexAgent/HermexAgent.github.io?style=for-the-badge&color=blue)](https://github.com/HermexAgent/HermexAgent.github.io)
 [![Website](https://img.shields.io/badge/Website-HermexAgent.github.io-purple.svg?style=for-the-badge)](https://hermexagent.github.io)
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=for-the-badge)](LICENSE)
 
@@ -27,7 +27,7 @@
 Run this single command in your terminal to install and setup the entire stack:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/HermexAgent/HermexAgent/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/HermexAgent/HermexAgent.github.io/main/install.sh | bash
 ```
 
 ---
@@ -75,6 +75,7 @@ HermexAgent/
 ├── supervisor/                 # Core supervisor & orchestration engine
 │   ├── bot/                    # Telegram C2 Gateway & Interactive Menus
 │   ├── hub/                    # 1-Click Ollama Manager & Whisper STT
+│   ├── web_server.py           # Embedded Local Web Dashboard
 │   └── main.py                 # Master background service
 └── web-ui/                     # Interactive Desktop / Web UI Workspace
 ```
