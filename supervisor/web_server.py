@@ -9,6 +9,8 @@ from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from supervisor.hub.ollama_manager import OllamaHub, CATALOG_MODELS
 
+from supervisor.hub.persian_patcher import PersianPatcher
+
 app = FastAPI(title="HermexAgent Web Dashboard")
 
 app.add_middleware(
@@ -95,18 +97,19 @@ DASHBOARD_HTML = """
             <!-- Telegram & Control Gateway -->
             <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
                 <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                    🤖 Telegram Remote Control
+                    🤖 Telegram & Persian RTL Hub
                 </h2>
-                <p class="text-xs text-gray-400">Control everything remotely from Telegram on your phone.</p>
+                <p class="text-xs text-gray-400">Control remotely from Telegram & customize Hermes WebUI.</p>
                 <div class="p-4 bg-gray-950 rounded-lg border border-gray-800 space-y-3">
                     <div class="text-sm text-gray-300">
                         • Send voice memos in Persian/English (STT)<br>
-                        • Execute shell commands safely<br>
-                        • Download Ollama models from Telegram
+                        • 1-Click Vazirmatn font & RTL patch for WebUI<br>
+                        • Download Ollama models directly
                     </div>
-                    <div class="text-xs text-emerald-400 bg-emerald-950/60 p-2.5 rounded border border-emerald-800/60">
-                        ✓ Telegram Gateway service is running in background.
-                    </div>
+                    <button onclick="applyPersianPatch()" class="w-full py-2 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-xs font-semibold transition">
+                        🇮🇷 1-Click Install Vazirmatn & RTL to WebUI
+                    </button>
+                    <div id="persian-status" class="hidden text-xs text-emerald-400 bg-emerald-950/60 p-2 rounded border border-emerald-800/60"></div>
                 </div>
             </div>
         </div>
@@ -140,6 +143,22 @@ DASHBOARD_HTML = """
                 text.innerText = `❌ Error: ${err.message}`;
             }
         }
+        async function applyPersianPatch() {
+            const statusBox = document.getElementById('persian-status');
+            statusBox.classList.remove('hidden');
+            statusBox.innerText = '⏳ Applying Vazirmatn font & RTL patch...';
+            try {
+                const res = await fetch('/api/persian-patch', { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    statusBox.innerText = `✅ ${data.message}`;
+                } else {
+                    statusBox.innerText = `⚠️ ${data.message}`;
+                }
+            } catch (err) {
+                statusBox.innerText = `❌ Error: ${err.message}`;
+            }
+        }
     </script>
 </body>
 </html>
@@ -152,6 +171,10 @@ async def get_dashboard():
 @app.get("/api/models")
 async def get_models():
     return {"catalog": CATALOG_MODELS, "installed": await ollama_hub.list_installed_models()}
+
+@app.post("/api/persian-patch")
+async def patch_persian():
+    return PersianPatcher.apply_persian_rtl_patch()
 
 @app.post("/api/pull")
 async def pull_model_endpoint(model: str):

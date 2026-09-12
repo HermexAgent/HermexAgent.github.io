@@ -1,5 +1,5 @@
 """
-HermexAgent Telegram Command & Control Gateway with Dynamic Voice/STT Quality Upgrader
+HermexAgent Telegram Command & Control Gateway with Dynamic Voice/STT & Persian RTL Patcher
 """
 
 import asyncio
@@ -10,6 +10,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
 from supervisor.hub.ollama_manager import OllamaHub, CATALOG_MODELS
 from supervisor.hub.voice_manager import VoiceHub, WHISPER_CATALOG, TTS_VOICES
+from supervisor.hub.persian_patcher import PersianPatcher
 
 logger = logging.getLogger("HermexAgent.TelegramBot")
 
@@ -42,27 +43,50 @@ class TelegramGateway:
             return
 
         welcome_text = (
-            "🚀 *Welcome to HermexAgent Command Center*\n\n"
-            "NexusAgent is your all-in-one autonomous AI assistant. You can chat directly, "
-            "send voice messages, or manage local models with 1 click.\n\n"
-            "📌 *Quick Actions:*"
+            "🚀 *به مرکز کنترل HermexAgent خوش آمدید*\n\n"
+            "دستیار هوشمند همه‌کاره برای چت صوتی/متنی، دانلود مدل‌های لوکال اولاما و بهینه‌سازی وب‌یوآی.\n\n"
+            "📌 *دسترسی‌های سریع:*"
         )
         
         keyboard = [
             [
-                InlineKeyboardButton("📦 Ollama Model Hub", callback_data="hub_ollama"),
-                InlineKeyboardButton("🎙 Voice & STT Hub", callback_data="hub_voice")
+                InlineKeyboardButton("📦 هاب مدل‌های Ollama", callback_data="hub_ollama"),
+                InlineKeyboardButton("🎙 هاب پردازش صوت (STT/TTS)", callback_data="hub_voice")
             ],
             [
-                InlineKeyboardButton("📊 System Status", callback_data="sys_status"),
-                InlineKeyboardButton("⚙️ Switch Voice / Model", callback_data="hub_voice_switch")
+                InlineKeyboardButton("🇮🇷 راست‌چین و فونت وزیر وب‌یوآی", callback_data="patch_persian_rtl"),
+                InlineKeyboardButton("📊 وضعیت سیستم", callback_data="sys_status")
             ]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(welcome_text, parse_mode="Markdown", reply_markup=reply_markup)
 
+    async def handle_persian_patch(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """1-Click apply Vazirmatn font and smart RTL to Hermes WebUI."""
+        query = update.callback_query
+        if not query:
+            return
+        await query.answer("در حال اعمال فونت وزیرمتن و راست‌چین...")
+
+        result = PersianPatcher.apply_persian_rtl_patch()
+        if result.get("success"):
+            text = (
+                "✅ *پچ راست‌چین و فونت وزیرمتن با موفقیت اعمال شد!*\n\n"
+                f"📝 {result.get('message')}\n\n"
+                "تمامی متون فارسی در هرمس وب‌یوآی اکنون با فونت زیبای **وزیرمتن** و جهت راست‌به‌چپ (RTL) رندر می‌شوند."
+            )
+        else:
+            text = (
+                "⚠️ *نکته درباره پچ راست‌چین:*\n\n"
+                f"{result.get('message')}\n\n"
+                "برای اعمال دستی یا تغییر مسیر، می‌توانید ریپازیتوری زیر را بررسی کنید:\n"
+                "🔗 https://github.com/m4tinbeigi-official/hermes-webui-persian"
+            )
+
+        keyboard = [[InlineKeyboardButton("🔙 بازگشت به منوی اصلی", callback_data="main_menu")]]
+        await query.edit_message_text(text, parse_mode="Markdown", reply_markup=InlineKeyboardMarkup(keyboard))
+
     async def voice_hub_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Interactive Voice Hub with Quality Selection."""
         query = update.callback_query
         if not query:
             return
@@ -87,8 +111,8 @@ class TelegramGateway:
             ])
             
         keyboard.append([
-            InlineKeyboardButton("🗣 Change TTS Voice", callback_data="list_tts_voices"),
-            InlineKeyboardButton("🔙 Main Menu", callback_data="main_menu")
+            InlineKeyboardButton("🗣 تغییر صدای پاسخ (TTS)", callback_data="list_tts_voices"),
+            InlineKeyboardButton("🔙 منوی اصلی", callback_data="main_menu")
         ])
 
         await query.edit_message_text(text, parse_mode="Markdown", reply_markup=InlineKeyboardMarkup(keyboard))
@@ -117,7 +141,7 @@ class TelegramGateway:
         keyboard.append([InlineKeyboardButton("🔙 Back to Voice Hub", callback_data="hub_voice")])
 
         await query.edit_message_text(
-            "🗣 *Select Text-to-Speech (TTS) Voice:*",
+            "🗣 *انتخاب صدای گفتار (TTS):*",
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
@@ -155,7 +179,7 @@ class TelegramGateway:
                     callback_data=f"pull_{model['id']}"
                 )
             ])
-        keyboard.append([InlineKeyboardButton("🔙 Back to Main Menu", callback_data="main_menu")])
+        keyboard.append([InlineKeyboardButton("🔙 منوی اصلی", callback_data="main_menu")])
 
         await query.edit_message_text(text, parse_mode="Markdown", reply_markup=InlineKeyboardMarkup(keyboard))
 
@@ -239,7 +263,6 @@ class TelegramGateway:
         model_used = result.get("model_used", "small")
         prob = int(result.get("probability", 1.0) * 100)
 
-        # Proactive quality upgrade suggestion button if on tiny/base/small
         keyboard = []
         if model_used in ["tiny", "base", "small"]:
             keyboard.append([
@@ -267,8 +290,10 @@ class TelegramGateway:
 
         self.app = Application.builder().token(self.bot_token).build()
         self.app.add_handler(CommandHandler("start", self.start_cmd))
+        self.app.add_handler(CallbackQueryHandler(self.start_cmd, pattern="^main_menu$"))
         self.app.add_handler(CallbackQueryHandler(self.ollama_hub_menu, pattern="^hub_ollama$"))
         self.app.add_handler(CallbackQueryHandler(self.voice_hub_menu, pattern="^hub_voice$"))
+        self.app.add_handler(CallbackQueryHandler(self.handle_persian_patch, pattern="^patch_persian_rtl$"))
         self.app.add_handler(CallbackQueryHandler(self.handle_whisper_switch, pattern="^set_whisper_"))
         self.app.add_handler(CallbackQueryHandler(self.list_tts_voices_menu, pattern="^list_tts_voices$"))
         self.app.add_handler(CallbackQueryHandler(self.handle_tts_switch, pattern="^set_tts_"))
