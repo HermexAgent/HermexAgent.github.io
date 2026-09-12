@@ -1,5 +1,5 @@
 """
-HermexAgent Telegram Command & Control Gateway
+HermexAgent Telegram Command & Control Gateway with Dynamic Voice/STT Quality Upgrader
 """
 
 import asyncio
@@ -9,7 +9,7 @@ import yaml
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
 from supervisor.hub.ollama_manager import OllamaHub, CATALOG_MODELS
-from supervisor.hub.voice_manager import VoiceHub
+from supervisor.hub.voice_manager import VoiceHub, WHISPER_CATALOG, TTS_VOICES
 
 logger = logging.getLogger("HermexAgent.TelegramBot")
 
@@ -21,12 +21,14 @@ class TelegramGateway:
         self.bot_token = self.config.get("telegram", {}).get("bot_token")
         self.allowed_users = self.config.get("telegram", {}).get("allowed_users", [])
         self.ollama_hub = OllamaHub(self.config.get("models", {}).get("ollama", {}).get("host", "http://127.0.0.1:11434"))
-        self.voice_hub = VoiceHub()
+        self.voice_hub = VoiceHub(
+            model_size=self.config.get("voice", {}).get("stt", {}).get("model", "small"),
+            tts_voice=self.config.get("voice", {}).get("tts", {}).get("voice", "fa-IR-DilaraNeural")
+        )
         self.app = None
 
     def is_authorized(self, user_id: int) -> bool:
         if not self.allowed_users:
-            # First user becomes admin
             self.allowed_users.append(user_id)
             return True
         return user_id in self.allowed_users
@@ -41,7 +43,7 @@ class TelegramGateway:
 
         welcome_text = (
             "🚀 *Welcome to HermexAgent Command Center*\n\n"
-            "HermexAgent is your all-in-one autonomous AI assistant. You can chat directly, "
+            "NexusAgent is your all-in-one autonomous AI assistant. You can chat directly, "
             "send voice messages, or manage local models with 1 click.\n\n"
             "📌 *Quick Actions:*"
         )
@@ -53,11 +55,81 @@ class TelegramGateway:
             ],
             [
                 InlineKeyboardButton("📊 System Status", callback_data="sys_status"),
-                InlineKeyboardButton("⚙️ Switch Model", callback_data="switch_model")
+                InlineKeyboardButton("⚙️ Switch Voice / Model", callback_data="hub_voice_switch")
             ]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(welcome_text, parse_mode="Markdown", reply_markup=reply_markup)
+
+    async def voice_hub_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Interactive Voice Hub with Quality Selection."""
+        query = update.callback_query
+        if not query:
+            return
+        await query.answer()
+
+        text = (
+            f"🎙 *Voice & Audio Processing Hub*\n\n"
+            f"• *Active STT Model:* `{self.voice_hub.model_size}`\n"
+            f"• *Active TTS Voice:* `{self.voice_hub.tts_voice}`\n\n"
+            f"If you're not satisfied with speech recognition accuracy (e.g. Persian accents), "
+            f"upgrade to **Whisper Medium** or **Large-v3-Turbo** with 1-click:"
+        )
+
+        keyboard = []
+        for model in WHISPER_CATALOG:
+            is_active = "✅ " if model["id"] == self.voice_hub.model_size else "⬇️ "
+            keyboard.append([
+                InlineKeyboardButton(
+                    f"{is_active}{model['name']} ({model['size']}) | {model['fa_quality']}", 
+                    callback_data=f"set_whisper_{model['id']}"
+                )
+            ])
+            
+        keyboard.append([
+            InlineKeyboardButton("🗣 Change TTS Voice", callback_data="list_tts_voices"),
+            InlineKeyboardButton("🔙 Main Menu", callback_data="main_menu")
+        ])
+
+        await query.edit_message_text(text, parse_mode="Markdown", reply_markup=InlineKeyboardMarkup(keyboard))
+
+    async def handle_whisper_switch(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        query = update.callback_query
+        if not query or not query.data:
+            return
+        model_id = query.data.replace("set_whisper_", "")
+        self.voice_hub.set_model_size(model_id)
+        await query.answer(f"Switched STT model to {model_id}!")
+        await self.voice_hub_menu(update, context)
+
+    async def list_tts_voices_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        query = update.callback_query
+        if not query:
+            return
+        await query.answer()
+
+        keyboard = []
+        for v in TTS_VOICES:
+            is_active = "✅ " if v["id"] == self.voice_hub.tts_voice else ""
+            keyboard.append([
+                InlineKeyboardButton(f"{is_active}{v['name']}", callback_data=f"set_tts_{v['id']}")
+            ])
+        keyboard.append([InlineKeyboardButton("🔙 Back to Voice Hub", callback_data="hub_voice")])
+
+        await query.edit_message_text(
+            "🗣 *Select Text-to-Speech (TTS) Voice:*",
+            parse_mode="Markdown",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+
+    async def handle_tts_switch(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        query = update.callback_query
+        if not query or not query.data:
+            return
+        voice_id = query.data.replace("set_tts_", "")
+        self.voice_hub.set_tts_voice(voice_id)
+        await query.answer(f"Switched TTS voice to {voice_id}!")
+        await self.voice_hub_menu(update, context)
 
     async def ollama_hub_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
@@ -158,12 +230,33 @@ class TelegramGateway:
 
         msg = await update.message.reply_text("🎙 _Transcribing voice message (Faster-Whisper)..._", parse_mode="Markdown")
         
-        transcribed_text = await self.voice_hub.transcribe(temp_audio_path)
-        if not transcribed_text:
-            await msg.edit_text("⚠️ Could not transcribe audio.")
+        result = await self.voice_hub.transcribe(temp_audio_path)
+        if not result or not result.get("text"):
+            await msg.edit_text("⚠️ Could not transcribe audio. Would you like to switch to a higher quality model?")
             return
 
-        await msg.edit_text(f"🗣 *Transcribed:* \"_{transcribed_text}_\"\n\n🧠 _Thinking..._", parse_mode="Markdown")
+        transcribed_text = result["text"]
+        model_used = result.get("model_used", "small")
+        prob = int(result.get("probability", 1.0) * 100)
+
+        # Proactive quality upgrade suggestion button if on tiny/base/small
+        keyboard = []
+        if model_used in ["tiny", "base", "small"]:
+            keyboard.append([
+                InlineKeyboardButton("🚀 کیفیت تشخیص کلمات کمه؟ ارتقا به Large Turbo", callback_data="hub_voice")
+            ])
+
+        reply_text = (
+            f"🗣 *متن شناسایی‌شده:* \"_{transcribed_text}_\"\n\n"
+            f"📊 _دقت مدل ({model_used}): {prob}%_\n\n"
+            f"🧠 _در حال پردازش پاسخ توسط ایجنت..._"
+        )
+
+        await msg.edit_text(
+            reply_text, 
+            parse_mode="Markdown", 
+            reply_markup=InlineKeyboardMarkup(keyboard) if keyboard else None
+        )
         if os.path.exists(temp_audio_path):
             os.remove(temp_audio_path)
 
@@ -175,6 +268,10 @@ class TelegramGateway:
         self.app = Application.builder().token(self.bot_token).build()
         self.app.add_handler(CommandHandler("start", self.start_cmd))
         self.app.add_handler(CallbackQueryHandler(self.ollama_hub_menu, pattern="^hub_ollama$"))
+        self.app.add_handler(CallbackQueryHandler(self.voice_hub_menu, pattern="^hub_voice$"))
+        self.app.add_handler(CallbackQueryHandler(self.handle_whisper_switch, pattern="^set_whisper_"))
+        self.app.add_handler(CallbackQueryHandler(self.list_tts_voices_menu, pattern="^list_tts_voices$"))
+        self.app.add_handler(CallbackQueryHandler(self.handle_tts_switch, pattern="^set_tts_"))
         self.app.add_handler(CallbackQueryHandler(self.handle_pull_callback, pattern="^pull_"))
         self.app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_chat_message))
         self.app.add_handler(MessageHandler(filters.VOICE, self.handle_voice_message))
