@@ -1,20 +1,19 @@
-# 🌐 NexusAgent
+# 🌐 HermesX
 
 <div align="center">
 
 ```
-  _   _                       _                    _   
- | \ | | _____  ___   _ ___  / \   __ _  ___ _ __ | |_ 
- |  \| |/ _ \ \/ / | | / __|/ _ \ / _` |/ _ \ '_ \| __|
- | |\  |  __/>  <| |_| \__ / ___ \ (_| |  __/ | | | |_ 
- |_| \_|\___/_/\_\\__,_|___/_/   \_\__, |\___|_| |_|\__|
-                                   |___/                
+  _   _                                __  __
+ | | | | ___ _ __ _ __ ___   ___  ___  \ \/ /
+ | |_| |/ _ \ '__| '_ ` _ \ / _ \/ __|  \  / 
+ |  _  |  __/ |  | | | | | |  __/\__ \  /  \ 
+ |_| |_|\___|_|  |_| |_| |_|\___||___/ /_/\_\
 ```
 
 **The All-in-One Autonomous AI Stack**  
 *Zero-Config Installer • 1-Click Local Ollama & Voice Hub • Claude/Gmail Direct Login • Telegram Remote C2*
 
-[![GitHub Stars](https://img.shields.io/github/stars/m4tinbeigi-official/NexusAgent?style=for-the-badge&color=blue)](https://github.com/m4tinbeigi-official/NexusAgent)
+[![GitHub Stars](https://img.shields.io/github/stars/m4tinbeigi-official/HermesX?style=for-the-badge&color=blue)](https://github.com/m4tinbeigi-official/HermesX)
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=for-the-badge)](LICENSE)
 
 </div>
@@ -26,7 +25,7 @@
 Run this single command in your terminal to install and setup the entire stack:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/m4tinbeigi-official/NexusAgent/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/m4tinbeigi-official/HermesX/main/install.sh | bash
 ```
 
 ---
@@ -52,14 +51,14 @@ curl -fsSL https://raw.githubusercontent.com/m4tinbeigi-official/NexusAgent/main
 
 ## 🕹 CLI Management
 
-After installation, control NexusAgent easily from your terminal:
+After installation, control HermesX easily from your terminal:
 
 ```bash
-nexus start      # Start supervisor daemon in background
-nexus status     # Check health of supervisor, Ollama & bot
-nexus stop       # Stop all background daemons
-nexus logs       # View live stream logs
-nexus update     # Safe-update core stack without losing data
+hermesx start      # Start supervisor daemon in background
+hermesx status     # Check health of supervisor, Ollama & bot
+hermesx stop       # Stop all background daemons
+hermesx logs       # View live stream logs
+hermesx update     # Safe-update core stack without losing data
 ```
 
 ---
@@ -67,9 +66,9 @@ nexus update     # Safe-update core stack without losing data
 ## 📁 Project Architecture
 
 ```text
-NexusAgent/
+HermesX/
 ├── install.sh                  # 1-Line Zero-Config Installer
-├── scripts/nexus.sh            # Universal CLI control daemon
+├── scripts/hermesx.sh          # Universal CLI control daemon
 ├── config.example.yaml         # Central unified configuration
 ├── supervisor/                 # Core supervisor & orchestration engine
 │   ├── bot/                    # Telegram C2 Gateway & Interactive Menus

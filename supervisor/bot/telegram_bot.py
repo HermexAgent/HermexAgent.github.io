@@ -1,5 +1,5 @@
 """
-NexusAgent Telegram Command & Control Gateway
+HermesX Telegram Command & Control Gateway
 """
 
 import asyncio
@@ -11,7 +11,7 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler, Mess
 from supervisor.hub.ollama_manager import OllamaHub, CATALOG_MODELS
 from supervisor.hub.voice_manager import VoiceHub
 
-logger = logging.getLogger("NexusAgent.TelegramBot")
+logger = logging.getLogger("HermesX.TelegramBot")
 
 class TelegramGateway:
     def __init__(self, config_path: str):
@@ -38,8 +38,8 @@ class TelegramGateway:
             return
 
         welcome_text = (
-            "🚀 *Welcome to NexusAgent Command Center*\n\n"
-            "NexusAgent is your all-in-one autonomous AI assistant. You can chat directly, "
+            "🚀 *Welcome to HermesX Command Center*\n\n"
+            "HermesX is your all-in-one autonomous AI assistant. You can chat directly, "
             "send voice messages, or manage local models with 1 click.\n\n"
             "📌 *Quick Actions:*"
         )
@@ -134,7 +134,7 @@ class TelegramGateway:
         # Simulated agent thinking & response stream
         thinking_msg = await update.message.reply_text("🧠 _Agent thinking & processing tools..._", parse_mode="Markdown")
         await asyncio.sleep(1.0)
-        await thinking_msg.edit_text(f"🤖 *NexusAgent Reply:*\n\nReceived your instruction: `{user_prompt}`\n\n(Agent execution pipeline active)", parse_mode="Markdown")
+        await thinking_msg.edit_text(f"🤖 *HermesX Reply:*\n\nReceived your instruction: `{user_prompt}`\n\n(Agent execution pipeline active)", parse_mode="Markdown")
 
     async def handle_voice_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_id = update.effective_user.id
@@ -144,7 +144,7 @@ class TelegramGateway:
         voice = update.message.voice
         voice_file = await context.bot.get_file(voice.file_id)
         
-        temp_audio_path = f"/tmp/nexus_voice_{voice.file_id}.ogg"
+        temp_audio_path = f"/tmp/hermesx_voice_{voice.file_id}.ogg"
         await voice_file.download_to_drive(temp_audio_path)
 
         msg = await update.message.reply_text("🎙 _Transcribing voice message (Faster-Whisper)..._", parse_mode="Markdown")
