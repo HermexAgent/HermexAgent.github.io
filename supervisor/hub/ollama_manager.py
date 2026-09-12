@@ -1,5 +1,5 @@
 """
-HermesX Local Hub - 1-Click Ollama Manager & Fast Model Puller
+HermexAgent Local Hub - 1-Click Ollama Manager & Fast Model Puller
 """
 
 import asyncio
@@ -8,7 +8,7 @@ import logging
 import httpx
 from typing import AsyncGenerator, Dict, Any, List
 
-logger = logging.getLogger("HermesX.OllamaHub")
+logger = logging.getLogger("HermexAgent.OllamaHub")
 
 CATALOG_MODELS = [
     {

@@ -1,5 +1,5 @@
 """
-HermesX Main Supervisor Entrypoint
+HermexAgent Main Supervisor Entrypoint
 """
 
 import os
@@ -13,10 +13,10 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     handlers=[logging.StreamHandler(sys.stdout)]
 )
-logger = logging.getLogger("HermesX.Supervisor")
+logger = logging.getLogger("HermexAgent.Supervisor")
 
 def main():
-    logger.info("🚀 Booting HermesX Supervisor Daemon...")
+    logger.info("🚀 Booting HermexAgent Supervisor Daemon...")
     
     install_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     config_path = os.path.join(install_dir, "config.yaml")

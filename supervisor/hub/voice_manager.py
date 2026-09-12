@@ -1,12 +1,12 @@
 """
-HermesX Voice Hub - Faster-Whisper Local STT & Edge-TTS Engine
+HermexAgent Voice Hub - Faster-Whisper Local STT & Edge-TTS Engine
 """
 
 import os
 import logging
 from typing import Optional
 
-logger = logging.getLogger("HermesX.VoiceHub")
+logger = logging.getLogger("HermexAgent.VoiceHub")
 
 class VoiceHub:
     def __init__(self, model_size: str = "small", device: str = "auto"):

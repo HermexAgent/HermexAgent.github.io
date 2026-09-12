@@ -1,9 +1,9 @@
 # ==============================================================================
-# HermesX Central Configuration
+# HermexAgent Central Configuration
 # ==============================================================================
 
 app:
-  name: "HermesX"
+  name: "HermexAgent"
   version: "1.0.0"
   log_level: "INFO"
   workspace_dir: "~/workspace"

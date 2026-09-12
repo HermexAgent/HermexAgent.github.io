@@ -1,19 +1,21 @@
-# 🌐 HermesX
+# 🌐 HermexAgent
 
 <div align="center">
 
 ```
-  _   _                                __  __
- | | | | ___ _ __ _ __ ___   ___  ___  \ \/ /
- | |_| |/ _ \ '__| '_ ` _ \ / _ \/ __|  \  / 
- |  _  |  __/ |  | | | | | |  __/\__ \  /  \ 
- |_| |_|\___|_|  |_| |_| |_|\___||___/ /_/\_\
+  _   _                                           _                    _   
+ | | | | ___ _ __ _ __ ___   _____  __   / \   __ _  ___ _ __ | |_ 
+ | |_| |/ _ \ '__| '_ ` _ \ / _ \ \/ /  / _ \ / _` |/ _ \ '_ \| __|
+ |  _  |  __/ |  | | | | | |  __/>  <  / ___ \ (_| |  __/ | | | |_ 
+ |_| |_|\___|_|  |_| |_| |_|\___/_/\_\/_/   \_\__, |\___|_| |_|\__|
+                                               |___/                
 ```
 
 **The All-in-One Autonomous AI Stack**  
 *Zero-Config Installer • 1-Click Local Ollama & Voice Hub • Claude/Gmail Direct Login • Telegram Remote C2*
 
-[![GitHub Stars](https://img.shields.io/github/stars/m4tinbeigi-official/HermesX?style=for-the-badge&color=blue)](https://github.com/m4tinbeigi-official/HermesX)
+[![GitHub Stars](https://img.shields.io/github/stars/HermexAgent/HermexAgent?style=for-the-badge&color=blue)](https://github.com/HermexAgent/HermexAgent)
+[![Website](https://img.shields.io/badge/Website-HermexAgent.github.io-purple.svg?style=for-the-badge)](https://hermexagent.github.io)
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=for-the-badge)](LICENSE)
 
 </div>
@@ -25,7 +27,7 @@
 Run this single command in your terminal to install and setup the entire stack:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/m4tinbeigi-official/HermesX/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/HermexAgent/HermexAgent/main/install.sh | bash
 ```
 
 ---
@@ -51,14 +53,14 @@ curl -fsSL https://raw.githubusercontent.com/m4tinbeigi-official/HermesX/main/in
 
 ## 🕹 CLI Management
 
-After installation, control HermesX easily from your terminal:
+After installation, control HermexAgent easily from your terminal:
 
 ```bash
-hermesx start      # Start supervisor daemon in background
-hermesx status     # Check health of supervisor, Ollama & bot
-hermesx stop       # Stop all background daemons
-hermesx logs       # View live stream logs
-hermesx update     # Safe-update core stack without losing data
+hermex start      # Start supervisor daemon in background
+hermex status     # Check health of supervisor, Ollama & bot
+hermex stop       # Stop all background daemons
+hermex logs       # View live stream logs
+hermex update     # Safe-update core stack without losing data
 ```
 
 ---
@@ -66,9 +68,9 @@ hermesx update     # Safe-update core stack without losing data
 ## 📁 Project Architecture
 
 ```text
-HermesX/
+HermexAgent/
 ├── install.sh                  # 1-Line Zero-Config Installer
-├── scripts/hermesx.sh          # Universal CLI control daemon
+├── scripts/hermex.sh           # Universal CLI control daemon
 ├── config.example.yaml         # Central unified configuration
 ├── supervisor/                 # Core supervisor & orchestration engine
 │   ├── bot/                    # Telegram C2 Gateway & Interactive Menus
@@ -81,4 +83,4 @@ HermesX/
 
 ## 📄 License
 
-MIT © [Matin Beigi](https://github.com/m4tinbeigi-official)
+MIT © [HermexAgent](https://github.com/HermexAgent)

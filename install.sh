@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # ==============================================================================
-#  _   _                                __  __
-# | | | | ___ _ __ _ __ ___   ___  ___  \ \/ /
-# | |_| |/ _ \ '__| '_ ` _ \ / _ \/ __|  \  / 
-# |  _  |  __/ |  | | | | | |  __/\__ \  /  \ 
-# |_| |_|\___|_|  |_| |_| |_|\___||___/ /_/\_\
-#                                             
-# HermesX - The All-in-One Autonomous AI Stack
+#  _   _                                           _                    _   
+# | | | | ___ _ __ _ __ ___   _____  __   / \   __ _  ___ _ __ | |_ 
+# | |_| |/ _ \ '__| '_ ` _ \ / _ \ \/ /  / _ \ / _` |/ _ \ '_ \| __|
+# |  _  |  __/ |  | | | | | |  __/>  <  / ___ \ (_| |  __/ | | | |_ 
+# |_| |_|\___|_|  |_| |_| |_|\___/_/\_\/_/   \_\__, |\___|_| |_|\__|
+#                                               |___/                
+# HermexAgent - The All-in-One Autonomous AI Stack
 # Zero-Config Setup, Local AI Hub & Full Telegram Remote Control
 # ==============================================================================
 
@@ -21,18 +21,18 @@ NC='\033[0m'
 
 echo -e "${CYAN}${BOLD}"
 cat << "EOF"
-  _   _                                __  __
- | | | | ___ _ __ _ __ ___   ___  ___  \ \/ /
- | |_| |/ _ \ '__| '_ ` _ \ / _ \/ __|  \  / 
- |  _  |  __/ |  | | | | | |  __/\__ \  /  \ 
- |_| |_|\___|_|  |_| |_| |_|\___||___/ /_/\_\
-                                             
+  _   _                                           _                    _   
+ | | | | ___ _ __ _ __ ___   _____  __   / \   __ _  ___ _ __ | |_ 
+ | |_| |/ _ \ '__| '_ ` _ \ / _ \ \/ /  / _ \ / _` |/ _ \ '_ \| __|
+ |  _  |  __/ |  | | | | | |  __/>  <  / ___ \ (_| |  __/ | | | |_ 
+ |_| |_|\___|_|  |_| |_| |_|\___/_/\_\/_/   \_\__, |\___|_| |_|\__|
+                                               |___/                
        The All-in-One Autonomous AI Stack
 EOF
 echo -e "${NC}"
 
-INSTALL_DIR="$HOME/.hermesx"
-REPO_URL="https://github.com/m4tinbeigi-official/HermesX.git"
+INSTALL_DIR="$HOME/.hermexagent"
+REPO_URL="https://github.com/HermexAgent/HermexAgent.git"
 
 echo -e "${YELLOW}🔍 Checking system prerequisites...${NC}"
 
@@ -64,13 +64,13 @@ if ! command -v git &> /dev/null; then
 fi
 echo -e "${GREEN}✓ Git: $(git --version)${NC}"
 
-# Clone or update HermesX
+# Clone or update HermexAgent
 if [ -d "$INSTALL_DIR" ]; then
-    echo -e "${CYAN}📦 Updating existing HermesX installation at ${INSTALL_DIR}...${NC}"
+    echo -e "${CYAN}📦 Updating existing HermexAgent installation at ${INSTALL_DIR}...${NC}"
     cd "$INSTALL_DIR"
     git pull origin main
 else
-    echo -e "${CYAN}📦 Installing HermesX to ${INSTALL_DIR}...${NC}"
+    echo -e "${CYAN}📦 Installing HermexAgent to ${INSTALL_DIR}...${NC}"
     git clone "$REPO_URL" "$INSTALL_DIR"
     cd "$INSTALL_DIR"
 fi
@@ -107,7 +107,7 @@ fi
 
 # Symlink CLI
 mkdir -p "$HOME/.local/bin"
-ln -sf "$INSTALL_DIR/scripts/hermesx.sh" "$HOME/.local/bin/hermesx"
+ln -sf "$INSTALL_DIR/scripts/hermex.sh" "$HOME/.local/bin/hermex"
 
 # Add ~/.local/bin to PATH if not present
 if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
@@ -119,14 +119,14 @@ if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
 fi
 
 echo -e "\n${GREEN}${BOLD}==========================================================${NC}"
-echo -e "${GREEN}${BOLD}🎉 HermesX successfully installed!${NC}"
+echo -e "${GREEN}${BOLD}🎉 HermexAgent successfully installed!${NC}"
 echo -e "${GREEN}${BOLD}==========================================================${NC}"
-echo -e "To start HermesX now, simply run:"
-echo -e "  ${CYAN}${BOLD}hermesx start${NC}"
+echo -e "To start HermexAgent now, simply run:"
+echo -e "  ${CYAN}${BOLD}hermex start${NC}"
 echo -e ""
 echo -e "Other useful commands:"
-echo -e "  ${YELLOW}hermesx status${NC}   - Check health of supervisor, Ollama & bot"
-echo -e "  ${YELLOW}hermesx stop${NC}     - Stop all background daemons"
-echo -e "  ${YELLOW}hermesx logs${NC}     - View live stream logs"
-echo -e "  ${YELLOW}hermesx update${NC}   - Update without touching personal data"
+echo -e "  ${YELLOW}hermex status${NC}   - Check health of supervisor, Ollama & bot"
+echo -e "  ${YELLOW}hermex stop${NC}     - Stop all background daemons"
+echo -e "  ${YELLOW}hermex logs${NC}     - View live stream logs"
+echo -e "  ${YELLOW}hermex update${NC}   - Update without touching personal data"
 echo -e ""

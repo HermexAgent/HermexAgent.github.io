@@ -1,5 +1,5 @@
 """
-HermesX Telegram Command & Control Gateway
+HermexAgent Telegram Command & Control Gateway
 """
 
 import asyncio
@@ -11,7 +11,7 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler, Mess
 from supervisor.hub.ollama_manager import OllamaHub, CATALOG_MODELS
 from supervisor.hub.voice_manager import VoiceHub
 
-logger = logging.getLogger("HermesX.TelegramBot")
+logger = logging.getLogger("HermexAgent.TelegramBot")
 
 class TelegramGateway:
     def __init__(self, config_path: str):
@@ -32,14 +32,16 @@ class TelegramGateway:
         return user_id in self.allowed_users
 
     async def start_cmd(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        if not update.effective_user or not update.message:
+            return
         user_id = update.effective_user.id
         if not self.is_authorized(user_id):
             await update.message.reply_text("⛔️ Access Denied. You are not authorized.")
             return
 
         welcome_text = (
-            "🚀 *Welcome to HermesX Command Center*\n\n"
-            "HermesX is your all-in-one autonomous AI assistant. You can chat directly, "
+            "🚀 *Welcome to HermexAgent Command Center*\n\n"
+            "HermexAgent is your all-in-one autonomous AI assistant. You can chat directly, "
             "send voice messages, or manage local models with 1 click.\n\n"
             "📌 *Quick Actions:*"
         )
@@ -59,6 +61,8 @@ class TelegramGateway:
 
     async def ollama_hub_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
+        if not query:
+            return
         await query.answer()
 
         is_healthy = await self.ollama_hub.check_health()
@@ -85,10 +89,12 @@ class TelegramGateway:
 
     async def handle_pull_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         query = update.callback_query
+        if not query or not query.data:
+            return
         model_id = query.data.replace("pull_", "")
         await query.answer(f"Starting download for {model_id}...")
 
-        msg = await query.edit_message_text(
+        await query.edit_message_text(
             f"⏳ *Downloading `{model_id}` from Ollama...*\nPlease wait, streaming progress...",
             parse_mode="Markdown"
         )
@@ -126,17 +132,20 @@ class TelegramGateway:
             await query.edit_message_text(f"❌ Failed to download model: {e}")
 
     async def handle_chat_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        if not update.effective_user or not update.message or not update.message.text:
+            return
         user_id = update.effective_user.id
         if not self.is_authorized(user_id):
             return
 
         user_prompt = update.message.text
-        # Simulated agent thinking & response stream
         thinking_msg = await update.message.reply_text("🧠 _Agent thinking & processing tools..._", parse_mode="Markdown")
         await asyncio.sleep(1.0)
-        await thinking_msg.edit_text(f"🤖 *HermesX Reply:*\n\nReceived your instruction: `{user_prompt}`\n\n(Agent execution pipeline active)", parse_mode="Markdown")
+        await thinking_msg.edit_text(f"🤖 *HermexAgent Reply:*\n\nReceived your instruction: `{user_prompt}`\n\n(Agent execution pipeline active)", parse_mode="Markdown")
 
     async def handle_voice_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        if not update.effective_user or not update.message or not update.message.voice:
+            return
         user_id = update.effective_user.id
         if not self.is_authorized(user_id):
             return
@@ -144,7 +153,7 @@ class TelegramGateway:
         voice = update.message.voice
         voice_file = await context.bot.get_file(voice.file_id)
         
-        temp_audio_path = f"/tmp/hermesx_voice_{voice.file_id}.ogg"
+        temp_audio_path = f"/tmp/hermex_voice_{voice.file_id}.ogg"
         await voice_file.download_to_drive(temp_audio_path)
 
         msg = await update.message.reply_text("🎙 _Transcribing voice message (Faster-Whisper)..._", parse_mode="Markdown")
