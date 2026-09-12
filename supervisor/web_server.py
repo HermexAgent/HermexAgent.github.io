@@ -94,20 +94,20 @@ DASHBOARD_HTML = """
                 </div>
             </div>
 
-            <!-- Telegram & Control Gateway -->
+            <!-- Customization Hub -->
             <div class="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
                 <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                    🤖 Telegram & Persian RTL Hub
+                    🌐 WebUI Customization Hub
                 </h2>
-                <p class="text-xs text-gray-400">Control remotely from Telegram & customize Hermes WebUI.</p>
+                <p class="text-xs text-gray-400">Optional typography, layout enhancements & RTL support.</p>
                 <div class="p-4 bg-gray-950 rounded-lg border border-gray-800 space-y-3">
                     <div class="text-sm text-gray-300">
-                        • Send voice memos in Persian/English (STT)<br>
-                        • 1-Click Vazirmatn font & RTL patch for WebUI<br>
-                        • Download Ollama models directly
+                        • Clean global English interface by default<br>
+                        • 1-Click optional Vazirmatn font & RTL for Hermes WebUI<br>
+                        • Code blocks automatically isolated in LTR
                     </div>
-                    <button onclick="applyPersianPatch()" class="w-full py-2 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-xs font-semibold transition">
-                        🇮🇷 1-Click Install Vazirmatn & RTL to WebUI
+                    <button onclick="applyPersianPatch()" class="w-full py-2 px-3 bg-cyan-900/60 hover:bg-cyan-800 text-cyan-200 border border-cyan-700/60 rounded text-xs font-semibold transition">
+                        ✨ 1-Click Apply Vazirmatn Font & RTL
                     </button>
                     <div id="persian-status" class="hidden text-xs text-emerald-400 bg-emerald-950/60 p-2 rounded border border-emerald-800/60"></div>
                 </div>

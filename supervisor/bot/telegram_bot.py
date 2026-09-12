@@ -1,5 +1,5 @@
 """
-HermexAgent Telegram Command & Control Gateway with Dynamic Voice/STT & Persian RTL Patcher
+HermexAgent Telegram Command & Control Gateway (Global English First with Optional 1-Click Localization)
 """
 
 import asyncio
@@ -24,7 +24,7 @@ class TelegramGateway:
         self.ollama_hub = OllamaHub(self.config.get("models", {}).get("ollama", {}).get("host", "http://127.0.0.1:11434"))
         self.voice_hub = VoiceHub(
             model_size=self.config.get("voice", {}).get("stt", {}).get("model", "small"),
-            tts_voice=self.config.get("voice", {}).get("tts", {}).get("voice", "fa-IR-DilaraNeural")
+            tts_voice=self.config.get("voice", {}).get("tts", {}).get("voice", "en-US-JennyNeural")
         )
         self.app = None
 
@@ -43,47 +43,66 @@ class TelegramGateway:
             return
 
         welcome_text = (
-            "🚀 *به مرکز کنترل HermexAgent خوش آمدید*\n\n"
-            "دستیار هوشمند همه‌کاره برای چت صوتی/متنی، دانلود مدل‌های لوکال اولاما و بهینه‌سازی وب‌یوآی.\n\n"
-            "📌 *دسترسی‌های سریع:*"
+            "🚀 *Welcome to HermexAgent Command Center*\n\n"
+            "Your unified autonomous AI assistant for chat, local Ollama models, voice processing, and WebUI customization.\n\n"
+            "📌 *Quick Actions:*"
         )
         
         keyboard = [
             [
-                InlineKeyboardButton("📦 هاب مدل‌های Ollama", callback_data="hub_ollama"),
-                InlineKeyboardButton("🎙 هاب پردازش صوت (STT/TTS)", callback_data="hub_voice")
+                InlineKeyboardButton("📦 Ollama Model Hub", callback_data="hub_ollama"),
+                InlineKeyboardButton("🎙 Voice & STT Engine", callback_data="hub_voice")
             ],
             [
-                InlineKeyboardButton("🇮🇷 راست‌چین و فونت وزیر وب‌یوآی", callback_data="patch_persian_rtl"),
-                InlineKeyboardButton("📊 وضعیت سیستم", callback_data="sys_status")
+                InlineKeyboardButton("🌐 Customization & RTL Hub", callback_data="hub_localization"),
+                InlineKeyboardButton("📊 System Status", callback_data="sys_status")
             ]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(welcome_text, parse_mode="Markdown", reply_markup=reply_markup)
+
+    async def localization_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Optional Localization & WebUI Styling Hub."""
+        query = update.callback_query
+        if not query:
+            return
+        await query.answer()
+
+        text = (
+            "🌐 *WebUI Customization & Localization Hub*\n\n"
+            "Need RTL support (Persian/Arabic) or custom typography for your Hermes WebUI?\n"
+            "Apply the Vazirmatn font & Smart RTL layout with 1 click:"
+        )
+
+        keyboard = [
+            [InlineKeyboardButton("✨ 1-Click Apply Vazirmatn Font & RTL", callback_data="patch_persian_rtl")],
+            [InlineKeyboardButton("🔙 Main Menu", callback_data="main_menu")]
+        ]
+        await query.edit_message_text(text, parse_mode="Markdown", reply_markup=InlineKeyboardMarkup(keyboard))
 
     async def handle_persian_patch(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """1-Click apply Vazirmatn font and smart RTL to Hermes WebUI."""
         query = update.callback_query
         if not query:
             return
-        await query.answer("در حال اعمال فونت وزیرمتن و راست‌چین...")
+        await query.answer("Applying Vazirmatn font & RTL patch...")
 
         result = PersianPatcher.apply_persian_rtl_patch()
         if result.get("success"):
             text = (
-                "✅ *پچ راست‌چین و فونت وزیرمتن با موفقیت اعمال شد!*\n\n"
+                "✅ *Vazirmatn font & Smart RTL patch applied successfully!*\n\n"
                 f"📝 {result.get('message')}\n\n"
-                "تمامی متون فارسی در هرمس وب‌یوآی اکنون با فونت زیبای **وزیرمتن** و جهت راست‌به‌چپ (RTL) رندر می‌شوند."
+                "All Persian/Arabic text in Hermes WebUI is now rendered with the beautiful **Vazirmatn** font and RTL alignment, while code blocks remain LTR."
             )
         else:
             text = (
-                "⚠️ *نکته درباره پچ راست‌چین:*\n\n"
+                "⚠️ *WebUI Patch Notice:*\n\n"
                 f"{result.get('message')}\n\n"
-                "برای اعمال دستی یا تغییر مسیر، می‌توانید ریپازیتوری زیر را بررسی کنید:\n"
+                "For manual configuration or options, check:\n"
                 "🔗 https://github.com/m4tinbeigi-official/hermes-webui-persian"
             )
 
-        keyboard = [[InlineKeyboardButton("🔙 بازگشت به منوی اصلی", callback_data="main_menu")]]
+        keyboard = [[InlineKeyboardButton("🔙 Back to Menu", callback_data="main_menu")]]
         await query.edit_message_text(text, parse_mode="Markdown", reply_markup=InlineKeyboardMarkup(keyboard))
 
     async def voice_hub_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -96,8 +115,8 @@ class TelegramGateway:
             f"🎙 *Voice & Audio Processing Hub*\n\n"
             f"• *Active STT Model:* `{self.voice_hub.model_size}`\n"
             f"• *Active TTS Voice:* `{self.voice_hub.tts_voice}`\n\n"
-            f"If you're not satisfied with speech recognition accuracy (e.g. Persian accents), "
-            f"upgrade to **Whisper Medium** or **Large-v3-Turbo** with 1-click:"
+            f"If you need higher transcription precision for accents or multilinguality, "
+            f"switch to **Whisper Medium** or **Large-v3-Turbo**:"
         )
 
         keyboard = []
@@ -105,14 +124,14 @@ class TelegramGateway:
             is_active = "✅ " if model["id"] == self.voice_hub.model_size else "⬇️ "
             keyboard.append([
                 InlineKeyboardButton(
-                    f"{is_active}{model['name']} ({model['size']}) | {model['fa_quality']}", 
+                    f"{is_active}{model['name']} ({model['size']})", 
                     callback_data=f"set_whisper_{model['id']}"
                 )
             ])
             
         keyboard.append([
-            InlineKeyboardButton("🗣 تغییر صدای پاسخ (TTS)", callback_data="list_tts_voices"),
-            InlineKeyboardButton("🔙 منوی اصلی", callback_data="main_menu")
+            InlineKeyboardButton("🗣 Change TTS Voice", callback_data="list_tts_voices"),
+            InlineKeyboardButton("🔙 Main Menu", callback_data="main_menu")
         ])
 
         await query.edit_message_text(text, parse_mode="Markdown", reply_markup=InlineKeyboardMarkup(keyboard))
@@ -141,7 +160,7 @@ class TelegramGateway:
         keyboard.append([InlineKeyboardButton("🔙 Back to Voice Hub", callback_data="hub_voice")])
 
         await query.edit_message_text(
-            "🗣 *انتخاب صدای گفتار (TTS):*",
+            "🗣 *Select Text-to-Speech (TTS) Voice:*",
             parse_mode="Markdown",
             reply_markup=InlineKeyboardMarkup(keyboard)
         )
@@ -168,7 +187,7 @@ class TelegramGateway:
             f"📦 *Ollama Local AI Hub*\n\n"
             f"• Status: {status_emoji}\n"
             f"• Host: `{self.ollama_hub.host}`\n\n"
-            f"Select a model to download & install with 1-click:"
+            f"Select a model to download & run with 1-click:"
         )
 
         keyboard = []
@@ -179,7 +198,7 @@ class TelegramGateway:
                     callback_data=f"pull_{model['id']}"
                 )
             ])
-        keyboard.append([InlineKeyboardButton("🔙 منوی اصلی", callback_data="main_menu")])
+        keyboard.append([InlineKeyboardButton("🔙 Main Menu", callback_data="main_menu")])
 
         await query.edit_message_text(text, parse_mode="Markdown", reply_markup=InlineKeyboardMarkup(keyboard))
 
@@ -266,13 +285,13 @@ class TelegramGateway:
         keyboard = []
         if model_used in ["tiny", "base", "small"]:
             keyboard.append([
-                InlineKeyboardButton("🚀 کیفیت تشخیص کلمات کمه؟ ارتقا به Large Turbo", callback_data="hub_voice")
+                InlineKeyboardButton("🚀 Need higher accuracy? Upgrade to Large Turbo", callback_data="hub_voice")
             ])
 
         reply_text = (
-            f"🗣 *متن شناسایی‌شده:* \"_{transcribed_text}_\"\n\n"
-            f"📊 _دقت مدل ({model_used}): {prob}%_\n\n"
-            f"🧠 _در حال پردازش پاسخ توسط ایجنت..._"
+            f"🗣 *Transcribed:* \"_{transcribed_text}_\"\n\n"
+            f"📊 _Accuracy ({model_used}): {prob}%_\n\n"
+            f"🧠 _Processing response..._"
         )
 
         await msg.edit_text(
@@ -293,6 +312,7 @@ class TelegramGateway:
         self.app.add_handler(CallbackQueryHandler(self.start_cmd, pattern="^main_menu$"))
         self.app.add_handler(CallbackQueryHandler(self.ollama_hub_menu, pattern="^hub_ollama$"))
         self.app.add_handler(CallbackQueryHandler(self.voice_hub_menu, pattern="^hub_voice$"))
+        self.app.add_handler(CallbackQueryHandler(self.localization_menu, pattern="^hub_localization$"))
         self.app.add_handler(CallbackQueryHandler(self.handle_persian_patch, pattern="^patch_persian_rtl$"))
         self.app.add_handler(CallbackQueryHandler(self.handle_whisper_switch, pattern="^set_whisper_"))
         self.app.add_handler(CallbackQueryHandler(self.list_tts_voices_menu, pattern="^list_tts_voices$"))
