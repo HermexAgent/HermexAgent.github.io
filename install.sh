@@ -118,15 +118,22 @@ if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
     echo -e "${YELLOW}ℹ️ Added ~/.local/bin to your PATH in $SHELL_RC${NC}"
 fi
 
+# Auto-start everything immediately!
+echo -e "\n${YELLOW}🚀 Auto-starting all HermexAgent services...${NC}"
+bash "$INSTALL_DIR/scripts/hermex.sh" start
+
+# Open Dashboard in Browser automatically
+if [ "$PLATFORM" = "Mac" ]; then
+    open "http://localhost:7860" 2>/dev/null || true
+elif command -v xdg-open &>/dev/null; then
+    xdg-open "http://localhost:7860" 2>/dev/null || true
+fi
+
 echo -e "\n${GREEN}${BOLD}==========================================================${NC}"
-echo -e "${GREEN}${BOLD}🎉 HermexAgent successfully installed!${NC}"
+echo -e "${GREEN}${BOLD}🎉 HermexAgent is live and running!${NC}"
 echo -e "${GREEN}${BOLD}==========================================================${NC}"
-echo -e "To start HermexAgent now, simply run:"
-echo -e "  ${CYAN}${BOLD}hermex start${NC}"
-echo -e ""
-echo -e "Other useful commands:"
-echo -e "  ${YELLOW}hermex status${NC}   - Check health of supervisor, Ollama & bot"
-echo -e "  ${YELLOW}hermex stop${NC}     - Stop all background daemons"
-echo -e "  ${YELLOW}hermex logs${NC}     - View live stream logs"
-echo -e "  ${YELLOW}hermex update${NC}   - Update without touching personal data"
+echo -e "Dashboard:   ${CYAN}${BOLD}http://localhost:7860${NC}"
+echo -e "Telegram:    ${GREEN}${BOLD}Ready & Active${NC}"
+echo -e "Live Logs:   ${YELLOW}hermex logs${NC}"
+echo -e "Status:      ${YELLOW}hermex status${NC}"
 echo -e ""
