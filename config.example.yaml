@@ -1,0 +1,51 @@
+# ==============================================================================
+# NexusAgent Central Configuration
+# ==============================================================================
+
+app:
+  name: "NexusAgent"
+  version: "1.0.0"
+  log_level: "INFO"
+  workspace_dir: "~/workspace"
+
+# ------------------------------------------------------------------------------
+# Telegram Gateway Configuration (Command & Control)
+# ------------------------------------------------------------------------------
+telegram:
+  enabled: true
+  bot_token: ""  # Get token from @BotFather
+  allowed_users: [] # User IDs allowed to access the bot (empty = first /start user becomes SuperAdmin)
+  voice_replies: false # When true, voice messages get voice answers (TTS)
+
+# ------------------------------------------------------------------------------
+# Routing & Model Hub
+# ------------------------------------------------------------------------------
+models:
+  default_provider: "ollama" # ollama, claude-web, gemini-web, openai, openrouter
+  default_model: "qwen2.5-coder:7b"
+  
+  # Local AI (Ollama)
+  ollama:
+    host: "http://127.0.0.1:11434"
+    auto_start: true
+
+  # Web Session Accounts (Zero-API-Key Direct Login)
+  web_accounts:
+    claude:
+      session_key: ""
+    google_gemini:
+      secure_1psid: ""
+    openai_chatgpt:
+      access_token: ""
+
+# ------------------------------------------------------------------------------
+# Local Voice & Audio Engines (STT & TTS)
+# ------------------------------------------------------------------------------
+voice:
+  stt:
+    engine: "faster-whisper" # faster-whisper, whisper-api
+    model: "small" # tiny, base, small, medium, large-v3-turbo
+    device: "auto" # auto, cpu, cuda
+  tts:
+    engine: "edge-tts"
+    voice: "fa-IR-DilaraNeural" # Persian voice default
